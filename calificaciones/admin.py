@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from .models import Materia, Grupo, Semestre
+from .models import Calificaciones, Materia, Semestre
 
 # Register your models here.
 
 admin.site.register(Materia)
-admin.site.register(Grupo)
 admin.site.register(Semestre)
+admin.site.register(Calificaciones)

@@ -1,6 +1,8 @@
 # Django
 from django.db import models
 
+from usuarios.models import Alumno, Maestro
+
 
 class Materia(models.Model):
     clave_materia = models.CharField(max_length=10)
@@ -8,55 +10,6 @@ class Materia(models.Model):
 
     def __str__(self):
         return self.nombre_materia
-
-
-class Grupo(models.Model):
-    GRUPOS = [
-        ('A', 'A'),
-        ('B', 'B'),
-        ('C', 'C'),
-        ('D', 'D'),
-        ('E', 'E'),
-        ('F', 'F'),
-        ('G', 'G'),
-        ('H', 'H'),
-        ('I', 'I'),
-        ('J', 'J'),
-        ('K', 'K'),
-        ('L', 'L'),
-    ]
-
-    GENE = 'GEN'
-    OFI = 'OFI'
-    SSP = 'SSP'
-    SPA = 'SPA'
-    AGRO = 'AGRO'
-    DS = 'DS'
-
-    CARRERAS = [
-        (GENE, 'General'),
-        (OFI, 'Ofimática'),
-        (SSP, 'Sistemas de Producción Pecuaria'),
-        (SPA, 'Sistemas de Producción Agrícola'),
-        (AGRO, 'Agropecuario'),
-        (DS, 'Desarrollo Sustentable'),
-    ]
-
-    desc = models.CharField(
-        max_length=1,
-        choices=GRUPOS,
-        default=('A','A'))
-
-    carrera = models.CharField(
-        max_length=55,
-        choices=CARRERAS,
-        default=CARRERAS[0])
-
-    def __str__(self):
-        if self.carrera == 'General':
-            return (f'"{self.desc}"')
-        else:
-            return (f'{self.carrera} - "{self.desc}"')
 
 
 class Semestre(models.Model):
@@ -79,3 +32,19 @@ class Semestre(models.Model):
     
     def __str__(self):
         return (f'{self.descripcion}° Semestre - {self.fecha_inicio.month}/{self.fecha_inicio.year} - {self.fecha_fin.month}/{self.fecha_fin.year}')
+
+
+class Calificaciones(models.Model):
+    alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE)
+    maestro = models.ForeignKey(Maestro, on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    semestre = models.ForeignKey(Semestre, on_delete=models.CASCADE)
+    cal_primer_parcial = models.IntegerField(blank=True, null=True)
+    cal_segundo_parcial = models.IntegerField(blank=True, null=True)
+    cal_tercer_parcial = models.IntegerField(blank=True, null=True)
+
+    def get_promedio(self):
+        return (self.cal_primer_parcial+self.cal_segundo_parcial+self.cal_tercer_parcial)/3
+
+    def __str__(self):
+        return (f'Calificaciones del alumno {self.alumno} en la materia {self.materia}')
